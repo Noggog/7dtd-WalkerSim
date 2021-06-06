@@ -8,7 +8,7 @@ namespace WalkerSim
         POIZoneManager _pois = new POIZoneManager();
         WorldZoneManager _worldZones = new WorldZoneManager();
 
-        Vector3 GetRandomZonePos(PlayerZone zone)
+        Vector3? GetRandomZonePos(PlayerZone zone)
         {
             var world = GameManager.Instance.World;
 
@@ -30,7 +30,7 @@ namespace WalkerSim
                 }
             }
 
-            return Vector3.zero;
+            return null;
         }
 
         void UpdatePlayerZones()
