@@ -43,36 +43,28 @@ namespace WalkerSim
 			ChunkAreaBiomeSpawnData spawnData = chunk.GetChunkBiomeSpawnData();
 			if (spawnData == null)
 			{
-#if DEBUG
-				Log.Out("No biome spawn data present");
-#endif
+				Logger.Debug("No biome spawn data present");
 				return -1;
 			}
 
 			var biomeData = world.Biomes.GetBiome(spawnData.biomeId);
 			if (biomeData == null)
 			{
-#if DEBUG
-				Log.Out("No biome data for biome id {0}", spawnData.biomeId);
-#endif
+				Logger.Debug("No biome data for biome id {0}", spawnData.biomeId);
 				return -1;
 			}
 
 			BiomeSpawnEntityGroupList biomeSpawnEntityGroupList = list[biomeData.m_sBiomeName];
 			if (biomeSpawnEntityGroupList == null)
 			{
-#if DEBUG
-				Log.Out("No biome spawn group specified for {0}", biomeData.m_sBiomeName);
-#endif
+				Logger.Debug("No biome spawn group specified for {0}", biomeData.m_sBiomeName);
 				return -1;
 			}
 
 			var numGroups = biomeSpawnEntityGroupList.list.Count;
 			if (numGroups == 0)
 			{
-#if DEBUG
-				Log.Out("No biome spawn group is empty for {0}", biomeData.m_sBiomeName);
-#endif
+				Logger.Debug("No biome spawn group is empty for {0}", biomeData.m_sBiomeName);
 				return -1;
 			}
 

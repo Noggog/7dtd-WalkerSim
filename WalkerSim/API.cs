@@ -33,7 +33,7 @@ namespace WalkerSim
 
         static void GameStartDone()
         {
-            Log.Out("[WalkerSim] GameStartDone");
+            Logger.Info("GameStartDone");
             _stopWatch.ResetAndRestart();
 
             _sim = new Simulation();
@@ -56,13 +56,13 @@ namespace WalkerSim
             }
             catch (Exception e)
             {
-                Log.Out(string.Format("[WalkerSim] Error in API.GameUpdate: {0}.", e.Message));
+                Logger.Error("Error in API.GameUpdate: {0}.", e.Message);
             }
         }
 
         static void GameShutdown()
         {
-            Log.Out("[WalkerSim] GameShutdown");
+            Logger.Info("GameShutdown");
             try
             {
                 if (_sim != null)
@@ -72,7 +72,7 @@ namespace WalkerSim
             }
             catch (Exception e)
             {
-                Log.Out(string.Format("[WalkerSim] Error in API.GameShutdown: {0}.", e.Message));
+                Logger.Error("Error in API.GameShutdown: {0}.", e.Message);
             }
         }
 
@@ -93,9 +93,7 @@ namespace WalkerSim
         {
             try
             {
-#if DEBUG
-                Log.Out("[WalkerSim] PlayerSpawnedInWorld \"{0}\", \"{1}\", \"{2}\"", _cInfo, _respawnReason, _pos);
-#endif
+                Logger.Debug("PlayerSpawnedInWorld \"{0}\", \"{1}\", \"{2}\"", _cInfo, _respawnReason, _pos);
                 if (_sim != null)
                 {
                     int entityId = GetPlayerEntityId(_cInfo);
@@ -113,7 +111,7 @@ namespace WalkerSim
             }
             catch (Exception e)
             {
-                Log.Out(string.Format("[WalkerSim] Error in API.PlayerSpawnedInWorld: {0}.", e.Message));
+                Logger.Error("Error in API.PlayerSpawnedInWorld: {0}.", e.Message);
             }
         }
 
@@ -121,15 +119,13 @@ namespace WalkerSim
         {
             try
             {
-#if DEBUG
-                Log.Out("[WalkerSim] PlayerDisconnected(\"{0}\", \"{1}\")", _cInfo, _bShutdown);
-#endif
+                Logger.Debug("PlayerDisconnected \"{0}\", \"{1}\"", _cInfo, _bShutdown);
                 int entityId = GetPlayerEntityId(_cInfo);
                 _sim.RemovePlayer(entityId);
             }
             catch (Exception e)
             {
-                Log.Out(string.Format("[WalkerSim] Error in API.PlayerDisconnected: {0}.", e.Message));
+                Logger.Error("Error in API.PlayerDisconnected: {0}.", e.Message);
             }
         }
     }

@@ -61,9 +61,7 @@ namespace WalkerSim
             Chunk? chunk = world.GetChunkSync(World.toChunkXZ(Mathf.FloorToInt(zombie.pos.x)), 0, World.toChunkXZ(Mathf.FloorToInt(zombie.pos.z))) as Chunk;
             if (chunk == null)
             {
-#if DEBUG
-                Log.Out("[WalkerSim] Chunk not loaded at {0} {1}", zombie.pos, zombie.pos.z);
-#endif
+                Logger.Debug("Chunk not loaded at {0} {1}", zombie.pos, zombie.pos.z);
                 return false;
             }
 
@@ -72,9 +70,7 @@ namespace WalkerSim
             Vector3 spawnPos = new Vector3(zombie.pos.x, height + 1.0f, zombie.pos.z);
             if (!CanZombieSpawnAt(spawnPos))
             {
-#if DEBUG
-                Log.Out("[WalkerSim] Unable to spawn zombie at {0}, CanMobsSpawnAtPos failed", spawnPos);
-#endif
+                Logger.Debug("Unable to spawn zombie at {0}, CanMobsSpawnAtPos failed", spawnPos);
                 return false;
             }
 
@@ -85,17 +81,13 @@ namespace WalkerSim
                 {
                     int lastClassId = -1;
                     zombie.classId = EntityGroups.GetRandomFromGroup("ZombiesAll", ref lastClassId);
-#if DEBUG
-                    Log.Out("Used fallback for zombie class!");
-#endif
+                    Logger.Debug("Used fallback for zombie class!");
                 }
             }
 
             if (EntityFactory.CreateEntity(zombie.classId, spawnPos) is not EntityZombie zombieEnt)
             {
-#if DEBUG
-                Log.Error("[WalkerSim] Unable to create zombie entity!, Entity Id: {0}, Pos: {1}", zombie.classId, spawnPos);
-#endif
+                Logger.Error("Unable to create zombie entity!, Entity Id: {0}, Pos: {1}", zombie.classId, spawnPos);
                 return false;
             }
 
@@ -106,9 +98,7 @@ namespace WalkerSim
             var targetPos = GetRandomZonePos(zone);
             if (targetPos == null)
             {
-#if DEBUG
-                Log.Error("[WalkerSim] Had to send zombie to center zone.");
-#endif
+                Logger.Error("Had to send zombie to center zone.");
                 targetPos = zone.center;
             }
             zombieEnt.SetInvestigatePosition(targetPos.Value, 6000, false);
@@ -134,9 +124,7 @@ namespace WalkerSim
 
             zone.numZombies++;
 
-#if DEBUG
-            Log.Out("[WalkerSim] Spawned zombie {0} at {1}", zombieEnt, spawnPos);
-#endif
+            Logger.Debug("Spawned zombie {0} at {1}", zombieEnt, spawnPos);
             lock (_activeZombies)
             {
                 _activeZombies.Add(zombie);
@@ -200,9 +188,7 @@ namespace WalkerSim
 
             if (world.GetEntity(zombie.entityId) is not EntityZombie ent)
             {
-#if DEBUG
-                Log.Out("[WalkerSim] Failed to get zombie with entity id {0}", zombie.entityId);
-#endif
+                Logger.Debug("Failed to get zombie with entity id {0}", zombie.entityId);
                 removeZombie = true;
                 RespawnInactiveZombie(zombie.Parent);
             }
@@ -221,9 +207,7 @@ namespace WalkerSim
                     List<PlayerZone> zones = _playerZones.FindAllByPos2D(ent.GetPosition());
                     if (zones.Count == 0 && timeAlive >= MinZombieLifeTime)
                     {
-#if DEBUG
-                        Log.Out("[WalkerSim] Zombie {0} out of range, turning inactive", ent);
-#endif
+                        Logger.Debug("Zombie {0} out of range, turning inactive", ent);
                         removeZombie = true;
 
                         world.RemoveEntity(zombie.entityId, EnumRemoveEntityReason.Despawned);
@@ -269,7 +253,7 @@ namespace WalkerSim
                     bool removeZombie;
                     if (zombie.Active == null)
                     {
-                        Log.Warning($"[WalkerSim] Tried to update ");
+                        Logger.Warning($"Tried to update ");
                         removeZombie = true;
                     }
                     else

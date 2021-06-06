@@ -66,19 +66,14 @@ namespace WalkerSim
                     var distanceToTarget = Vector3.Distance(entityZombie.position, entityZombie.InvestigatePosition);
                     if (distanceToTarget <= 20.0f)
                     {
-#if DEBUG
-                        Log.Out(
-                            $"[{Parent.id}] Reached its target at {entityZombie.InvestigatePosition}.");
-#endif
+                        Logger.Debug("[{0}] Reached its target at {1}.", Parent.id, entityZombie.InvestigatePosition);
                         entityZombie.ClearInvestigatePosition();
                         reachedInitialTarget = true;
                         _state.OnNext(State.Idle);
                     }
                     else
                     {
-#if DEBUG
-                        Log.Out($"[{Parent.id}] [{_state.Value}] was {distanceToTarget} away from its target");
-#endif
+                        Logger.Debug("[{0}] [{1}] was {2} away from its target.", Parent.id, _state.Value, distanceToTarget);
                     }
 
                     return Unit.Default;
@@ -92,9 +87,7 @@ namespace WalkerSim
             {
                 toWait = TimeSpan.FromSeconds(_rng.Get(Config.Instance.MinIdleSeconds, Config.Instance.MaxIdleSeconds));
             }
-#if DEBUG
-            Log.Out($"[{Parent.id}] waiting {toWait.TotalSeconds} seconds.");
-#endif
+            Logger.Debug("[{0}] [{1}] waiting {2} seconds.", Parent.id, _state.Value, toWait.TotalSeconds);
 
             return Observable.Interval(toWait)
                 .Take(1)
@@ -107,6 +100,7 @@ namespace WalkerSim
 
         private IObservable<Unit> WalkOut()
         {
+            Logger.Debug("[{0}] [{1}] walking away.", Parent.id, _state.Value);
             return Observable.Return(Unit.Default) 
                 .ObserveOn(MyScheduler.Instance)
                 .Select(_ =>
@@ -114,14 +108,13 @@ namespace WalkerSim
                     var world = GameManager.Instance.World;
                     if (world.GetEntity(entityId) is EntityZombie entityZombie)
                     {
-#if DEBUG
-                        Log.Out($"[{Parent.id}] walking away.");
-#endif
+                        Logger.Debug("[{0}] [{1}] walking away.", Parent.id, _state.Value);
                         intendedGoal = Parent.Inactive.targetPos;
                         entityZombie.SetInvestigatePosition(
                             intendedGoal,
                             6000,
                             false);
+                        Logger.Debug("[{0}] [{1}] has investigation target? {2}.  Investigation target: {3}", Parent.id, _state.Value, entityZombie.HasInvestigatePosition, entityZombie.InvestigatePosition);
                     }
                     
                     return Unit.Default;
@@ -135,7 +128,7 @@ namespace WalkerSim
                         {
 #if DEBUG
                             var distanceToTarget = Vector3.Distance(entityZombie.position, entityZombie.InvestigatePosition);
-                            Log.Out($"[{Parent.id}] [{_state.Value}] was {distanceToTarget} away from its target");
+                            Logger.Debug("[{0}] [{1}] was {2} away from its target", Parent.id, _state.Value, distanceToTarget);
 #endif
                             CheckIfDistracted(entityZombie);
                         }
@@ -155,9 +148,7 @@ namespace WalkerSim
                     // If no longer investigating something else
                     if (!entityZombie.HasInvestigatePosition)
                     {
-#if DEBUG
-                        Log.Out($"[{Parent.id}] no longer distracted.");
-#endif
+                        Logger.Debug("[{0}] [{1}] no longer distracted.", Parent.id, _state.Value);
                         // Try to walk to where we had wanted to go
                         entityZombie.SetInvestigatePosition(
                             intendedGoal,
@@ -174,9 +165,7 @@ namespace WalkerSim
         {
             if (intendedGoal != entityZombie.InvestigatePosition)
             {
-#if DEBUG
-                Log.Out($"[{Parent.id}] was distracted.");
-#endif
+                Logger.Debug("[{0}] [{1}] was distracted.  Goal was {2} but investigate target was {3}", Parent.id, _state.Value, intendedGoal, entityZombie.InvestigatePosition);
                 _state.OnNext(State.Distracted);
                 return true;
             }

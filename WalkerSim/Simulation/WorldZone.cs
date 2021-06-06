@@ -86,7 +86,7 @@ namespace WalkerSim
                 }
             }
 
-            Log.Out("[WalkerSim] Cached {0} world zones", _zones.Count);
+            Logger.Info("Cached {0} world zones", _zones.Count);
         }
 
         public List<Viewer.DataWorldZone> GetSerializable(Simulation sim)

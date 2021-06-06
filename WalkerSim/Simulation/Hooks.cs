@@ -35,9 +35,7 @@ namespace WalkerSim
 
         static bool Prefix(Entity instigator, Vector3 position, string clipName, float volumeScale)
         {
-#if DEBUG
-            Log.Out("[WalkerSim] NotifyNoise \"{0}\", \"{1}\", \"{2}\", \"{3}\"", instigator, position, clipName, volumeScale);
-#endif
+            Logger.Debug("NotifyNoise \"{0}\", \"{1}\", \"{2}\", \"{3}\"", instigator, position, clipName, volumeScale);
             float radius = GetSoundRadius(clipName);
 
             var simulation = API._sim;

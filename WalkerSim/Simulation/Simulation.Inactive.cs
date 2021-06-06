@@ -26,7 +26,7 @@ namespace WalkerSim
 
             if (numCreated > 0)
             {
-                Log.Out("[WalkerSim] Created {0} inactive roaming", numCreated);
+                Logger.Info("{0} inactive roaming", numCreated);
             }
         }
 
@@ -114,7 +114,7 @@ namespace WalkerSim
             }
             else
             {
-                Log.Warning($"{zombie.Parent.id} had no target!");
+                Logger.Warning($"{zombie.Parent.id} had no target!");
             }
         }
 
@@ -186,7 +186,7 @@ namespace WalkerSim
                     var world = GameManager.Instance.World;
                     if (world == null)
                     {
-                        Log.Out("[WalkerSim] World no longer exists, bailing");
+                        Logger.Info("World no longer exists, bailing");
                         break;
                     }
 
@@ -196,8 +196,6 @@ namespace WalkerSim
                     ZombieAgent zombie = _inactiveZombies[i];
 
                     UpdateInactiveZombie(zombie.Inactive, dt, ev);
-
-                    //Log.Out("New Zombie Position: {0}, Target: {1}", zombie.pos, zombie.targetPos);
 
                     if (!CanSpawnActiveZombie())
                         continue;
@@ -226,9 +224,7 @@ namespace WalkerSim
 
                         if (zone.numZombies >= maxPerZone)
                         {
-#if DEBUG
-                            Log.Out("[WalkerSim] Zone {0} is full: {1} / {2}", zombie.pos, zone.numZombies, maxPerZone);
-#endif
+                            Logger.Debug("Zone {0} is full: {1} / {2}", zombie.pos, zone.numZombies, maxPerZone);
                             continue;
                         }
 
@@ -257,19 +253,17 @@ namespace WalkerSim
                         // NOTE: This should never happen.
                         if (_inactiveZombies.Count == 0)
                         {
-                            Log.Error("Population is empty, this should not happen.");
+                            Logger.Error("Population is empty, this should not happen.");
                             break;
                         }
                     }
                 }
             }
 
-#if DEBUG
             if (activatedZombies > 0)
             {
-                Log.Out("[WalkerSim] Activated {0} zombies", activatedZombies);
+                Logger.Debug("Activated {0} zombies", activatedZombies);
             }
-#endif
         }
 
         ZombieAgent CreateInactiveZombie(bool initial)

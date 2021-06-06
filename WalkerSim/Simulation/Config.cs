@@ -68,7 +68,7 @@ namespace WalkerSim
         {
             try
             {
-                Log.Out("[WalkerSim] Loading configuration...");
+                Logger.Info("Loading configuration...");
 
                 XmlDocument doc = new XmlDocument();
                 doc.Load(configFile);
@@ -76,7 +76,7 @@ namespace WalkerSim
                 XmlNode nodeConfig = doc.DocumentElement;
                 if (nodeConfig == null || nodeConfig.Name != "WalkerSim")
                 {
-                    Log.Error("Invalid xml configuration format, unable to load config.");
+                    Logger.Error("Invalid xml configuration format, unable to load config.");
                     return false;
                 }
                 foreach (XmlNode node in nodeConfig.ChildNodes)
@@ -88,7 +88,7 @@ namespace WalkerSim
             }
             catch (Exception ex)
             {
-                Log.Warning("[WalkerSim] Unable to load configuration: {0}", configFile);
+                Logger.Warning("Unable to load configuration: {0}", configFile);
                 Log.Exception(ex);
                 return false;
             }
@@ -102,7 +102,7 @@ namespace WalkerSim
                 return false;
             else if (lower == "true" || lower == "1")
                 return true;
-            Log.Error("[WalkerSim] Invalid configuration parameter for bool: {0}", val);
+            Logger.Error("Invalid configuration parameter for bool: {0}", val);
             return false;
         }
 
@@ -114,43 +114,43 @@ namespace WalkerSim
                 {
                     case "UpdateInterval":
                         UpdateInterval = int.Parse(node.InnerText);
-                        Log.Out("[WalkerSim] {0} = {1}", "UpdateInterval", UpdateInterval);
+                        Logger.Info("{0} = {1}", "UpdateInterval", UpdateInterval);
                         break;
                     case "PauseWithoutPlayers":
                         PauseWithoutPlayers = ToBool(node.InnerText);
-                        Log.Out("[WalkerSim] {0} = {1}", "PauseWithoutPlayers", PauseWithoutPlayers);
+                        Logger.Info("{0} = {1}", "PauseWithoutPlayers", PauseWithoutPlayers);
                         break;
                     case "PauseDuringBloodmon":
                         PauseDuringBloodmon = ToBool(node.InnerText);
-                        Log.Out("[WalkerSim] {0} = {1}", "PauseDuringBloodmon", PauseDuringBloodmon);
+                        Logger.Info("{0} = {1}", "PauseDuringBloodmon", PauseDuringBloodmon);
                         break;
                     case "SpinupTicks":
                         SpinupTicks = int.Parse(node.InnerText);
-                        Log.Out("[WalkerSim] {0} = {1}", "SpinupTicks", SpinupTicks);
+                        Logger.Info("{0} = {1}", "SpinupTicks", SpinupTicks);
                         break;
                     case "Persistent":
                         Persistent = ToBool(node.InnerText);
-                        Log.Out("[WalkerSim] {0} = {1}", "Persistent", Persistent);
+                        Logger.Info("{0} = {1}", "Persistent", Persistent);
                         break;
                     case "WorldZoneDivider":
                         WorldZoneDivider = int.Parse(node.InnerText);
-                        Log.Out("[WalkerSim] {0} = {1}", "WorldZoneDivider", WorldZoneDivider);
+                        Logger.Info("{0} = {1}", "WorldZoneDivider", WorldZoneDivider);
                         break;
                     case "POITravellerChance":
                         POITravellerChance = MathUtils.Clamp(float.Parse(node.InnerText), 0.0f, 1.0f);
-                        Log.Out("[WalkerSim] {0} = {1}", "POITravellerChance", POITravellerChance);
+                        Logger.Info("{0} = {1}", "POITravellerChance", POITravellerChance);
                         break;
                     case "PopulationDensity":
                         PopulationDensity = int.Parse(node.InnerText);
-                        Log.Out("[WalkerSim] {0} = {1}", "PopulationDensity", PopulationDensity);
+                        Logger.Info("{0} = {1}", "PopulationDensity", PopulationDensity);
                         break;
                     case "WalkSpeedScale":
                         WalkSpeedScale = float.Parse(node.InnerText);
-                        Log.Out("[WalkerSim] {0} = {1}", "WalkSpeedScale", WalkSpeedScale);
+                        Logger.Info("{0} = {1}", "WalkSpeedScale", WalkSpeedScale);
                         break;
                     case "ReservedSpawnSlots":
                         ReservedSpawns = MathUtils.Clamp(float.Parse(node.InnerText), 0.0f, 1.0f);
-                        Log.Out("[WalkerSim] {0} = {1}", "ReservedSpawns", ReservedSpawns);
+                        Logger.Info("{0} = {1}", "ReservedSpawns", ReservedSpawns);
                         break;
                     case "SoundInfo":
                         ProcessSoundInfo(node);
@@ -158,12 +158,12 @@ namespace WalkerSim
 #if !DEBUG
                     case "ViewServer":
                         EnableViewServer = ToBool(node.InnerText);
-                        Log.Out("[WalkerSim] {0} = {1}", "ViewServer", EnableViewServer);
+                        Logger.Info("{0} = {1}", "ViewServer", EnableViewServer);
                         break;
 #endif
                     case "ViewServerPort":
                         ViewServerPort = int.Parse(node.InnerText);
-                        Log.Out("[WalkerSim] {0} = {1}", "ViewServerPort", ViewServerPort);
+                        Logger.Info("{0} = {1}", "ViewServerPort", ViewServerPort);
                         break;
                     case "MinIdleSeconds":
                         MinIdleSeconds = int.Parse(node.InnerText);
@@ -175,7 +175,7 @@ namespace WalkerSim
             }
             catch (Exception)
             {
-                Log.Out("Invalid configuration for {0}", node.Name);
+                Logger.Error("Invalid configuration for {0}", node.Name);
             }
         }
 
@@ -200,12 +200,12 @@ namespace WalkerSim
                         continue;
 
                     SoundDistance[audioName.Value] = dist;
-                    Log.Out("Sound: {0}, Distance {1}", audioName.Value, dist);
+                    Logger.Info("Sound: {0}, Distance {1}", audioName.Value, dist);
                 }
             }
             catch (Exception)
             {
-                Log.Out("Invalid configuration for {0}", node.Name);
+                Logger.Error("Invalid configuration for {0}", node.Name);
             }
         }
     }

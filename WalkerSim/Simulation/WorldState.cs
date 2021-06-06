@@ -128,11 +128,11 @@ namespace WalkerSim
             ZombieSpeed = CalculateZombieSpeed();
 #if DEBUG
             if (oldIsNight != IsNight)
-                Log.Out("[WalkerSim] isNight, Old: {0}, New: {1}", oldIsNight, IsNight);
+                Logger.Debug("isNight, Old: {0}, New: {1}", oldIsNight, IsNight);
             if (oldIsBloodMoon != IsBloodMoon)
-                Log.Out("[WalkerSim] isBloodMoon, Old: {0}, New: {1}", oldIsBloodMoon, IsBloodMoon);
+                Logger.Debug("isBloodMoon, Old: {0}, New: {1}", oldIsBloodMoon, IsBloodMoon);
             if (oldZombieSpeed != ZombieSpeed)
-                Log.Out("[WalkerSim] zombieSpeed, Old: {0}, New: {1}", oldZombieSpeed, ZombieSpeed);
+                Logger.Debug("zombieSpeed, Old: {0}, New: {1}", oldZombieSpeed, ZombieSpeed);
 #endif
             if (_invalidated)
             {

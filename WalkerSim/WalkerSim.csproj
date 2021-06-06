@@ -45,6 +45,7 @@
     <Compile Include="Commands.cs" />
     <Compile Include="Extends.cs" />
     <Compile Include="Harmony\LoaderHook.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="MyScheduler.cs" />
     <Compile Include="Simulation\BiomeData.cs" />
     <Compile Include="Simulation\Config.cs" />

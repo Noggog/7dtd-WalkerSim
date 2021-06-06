@@ -145,7 +145,7 @@ namespace WalkerSim
             var rescaled = (radius / worldSize) * 512.0f;
             data.distance = (int)rescaled;
 
-            Log.Out("Distance {0}, Scaled: {1}", radius, data.distance);
+            Logger.Info("Distance {0}, Scaled: {1}", radius, data.distance);
 
             sender.Broadcast(Viewer.DataType.WorldEventSound, data);
         }

@@ -86,7 +86,7 @@ namespace WalkerSim
 
         public PlayerZoneManager()
         {
-            Log.Out("[WalkerSim] Player Chunk View Dim: {0} - {1} - {2}", ChunkViewDim,
+            Logger.Info("Player Chunk View Dim: {0} - {1} - {2}", ChunkViewDim,
                 VisibleBox,
                 SpawnBlockBox);
         }
@@ -109,7 +109,7 @@ namespace WalkerSim
                 };
                 _zones.Add(UpdatePlayer(area, entityId));
 
-                Log.Out("[WalkerSim] Added player {0}", entityId);
+                Logger.Info("Added player {0}", entityId);
             }
         }
 
@@ -122,7 +122,7 @@ namespace WalkerSim
                     var ply = _zones[i] as PlayerZone;
                     if (ply.entityId == entityId)
                     {
-                        Log.Out("[WalkerSim] Removed player: {0}", entityId);
+                        Logger.Info("Removed player: {0}", entityId);
                         _zones.RemoveAt(i);
                         return;
                     }
@@ -176,7 +176,7 @@ namespace WalkerSim
                         _zones.RemoveAt(i);
                         i--;
 
-                        Log.Error("Player not in player list: {0}", ply.entityId);
+                        Logger.Error("Player not in player list: {0}", ply.entityId);
                     }
 
                     if (_zones.Count == 0)

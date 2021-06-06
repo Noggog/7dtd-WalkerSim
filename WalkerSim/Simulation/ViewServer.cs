@@ -42,7 +42,7 @@ namespace WalkerSim
             }
             catch (Exception ex)
             {
-                Log.Out("Unable to start server: {0}", ex.Message);
+                Logger.Error("Unable to start server: {0}", ex.Message);
                 return false;
             }
 
@@ -61,7 +61,7 @@ namespace WalkerSim
 
                 _clients.Add(client);
 
-                Log.Out("[WalkerSim] Client connected {0}", client.sock.RemoteEndPoint);
+                Logger.Info("Client connected {0}", client.sock.RemoteEndPoint);
 
                 if (OnClientConnected != null)
                 {
@@ -73,7 +73,7 @@ namespace WalkerSim
             }
             catch (Exception ex)
             {
-                Log.Out("Unable to accept new client: {0}", ex.Message);
+                Logger.Error("Unable to accept new client: {0}", ex.Message);
             }
         }
 
@@ -87,7 +87,7 @@ namespace WalkerSim
                     Client client = _clients[i];
                     if (client.disconnected)
                     {
-                        Log.Out("[WalkerSim] Client disconnected {0}", client.sock.RemoteEndPoint);
+                        Logger.Info("Client disconnected {0}", client.sock.RemoteEndPoint);
 
                         if (OnClientDisconnected != null)
                         {
@@ -104,7 +104,7 @@ namespace WalkerSim
             }
             catch (Exception ex)
             {
-                Log.Out("Server::Update caused exception");
+                Logger.Error("Server::Update caused exception");
                 Log.Exception(ex);
             }
 
@@ -129,7 +129,7 @@ namespace WalkerSim
             {
                 client.disconnected = true;
 #if DEBUG
-                Log.Out("ViewServer::Send caused exception");
+                Logger.Debug("ViewServer::Send caused exception");
                 Log.Exception(ex);
 #endif
             }
@@ -148,7 +148,7 @@ namespace WalkerSim
 #if DEBUG
                 if (!client.disconnected)
                 {
-                    Log.Out("ViewServer::SendCallback caused exception");
+                    Logger.Debug("ViewServer::SendCallback caused exception");
                     Log.Exception(ex);
                 }
 #endif

@@ -69,24 +69,24 @@ namespace WalkerSim
 
             MaxSpawnedZombies = MaxAliveZombies - Mathf.RoundToInt(MaxAliveZombies * Config.Instance.ReservedSpawns);
 
-            Log.Out("Simulation File: {0}", SimulationFile);
-            Log.Out("World X: {0}, World Y: {1} -- {2}, {3}", lenX, lenY, _worldMins, _worldMaxs);
-            Log.Out("Day Time: {0}", DayTimeMin);
-            Log.Out("Max Offline Zombies: {0}", _maxZombies);
-            Log.Out("Max Spawned Zombies: {0}", MaxSpawnedZombies);
+            Logger.Info("Simulation File: {0}", SimulationFile);
+            Logger.Info("World X: {0}, World Y: {1} -- {2}, {3}", lenX, lenY, _worldMins, _worldMaxs);
+            Logger.Info("Day Time: {0}", DayTimeMin);
+            Logger.Info("Max Offline Zombies: {0}", _maxZombies);
+            Logger.Info("Max Spawned Zombies: {0}", MaxSpawnedZombies);
 
 #if !DEBUG
             if (Config.Instance.EnableViewServer)
 #endif
             {
-                Log.Out("Starting server...");
+                Logger.Info("Starting server...");
 
                 _server.OnClientConnected += new ViewServer.OnClientConnectedDelegate(OnClientConnected);
                 _state.OnChange += new State.OnChangeDelegate(OnStateChanged);
 
                 if (_server.Start(Config.Instance.ViewServerPort))
                 {
-                    Log.Out("ViewServer running at port {0}", Config.Instance.ViewServerPort);
+                    Logger.Info("ViewServer running at port {0}", Config.Instance.ViewServerPort);
                 }
             }
 
@@ -97,7 +97,7 @@ namespace WalkerSim
             _worker.WorkerSupportsCancellation = true;
             _worker.DoWork += BackgroundUpdate;
             
-            Log.Out("[WalkerSim] Initialized");
+            Logger.Info("Initialized");
         }
 
         void OnClientConnected(ViewServer sender, ViewServer.Client cl)
@@ -125,11 +125,11 @@ namespace WalkerSim
         {
             if (_running)
             {
-                Log.Error("Simulation is already running");
+                Logger.Error("Simulation is already running");
                 return;
             }
 
-            Log.Out("[WalkerSim] Starting worker..");
+            Logger.Info("Starting worker..");
 
 #if DEBUG
             if (!Config.Instance.Persistent || !Load())
@@ -147,7 +147,7 @@ namespace WalkerSim
             if (!_running)
                 return;
 
-            Log.Out("[WalkerSim] Stopping worker..");
+            Logger.Info("Stopping worker..");
 
             _worker.CancelAsync();
             _running = false;
@@ -194,12 +194,12 @@ namespace WalkerSim
                         }
                         formatter.Serialize(stream, data);
                     }
-                    Log.Out("[WalkerSim] Saved simulation");
+                    Logger.Info("Saved simulation");
                 }
             }
             catch (Exception ex)
             {
-                Log.Out("Unable to save simulation");
+                Logger.Error("Unable to save simulation");
                 Log.Exception(ex);
             }
         }
@@ -227,7 +227,7 @@ namespace WalkerSim
                     var config = (Config)formatter.Deserialize(stream);
                     if (!config.Equals(Config.Instance))
                     {
-                        Log.Out("[WalkerSim] Configuration changed, not loading save.");
+                        Logger.Info("Configuration changed, not loading save.");
                         return false;
                     }
 
@@ -248,7 +248,7 @@ namespace WalkerSim
                                 inactiveZombie.Inactive.targetPos = new Vector3(zombie.targetX, zombie.targetY, zombie.targetZ);
                                 _inactiveZombies.Add(inactiveZombie);
                             }
-                            Log.Out("[WalkerSim] Loaded {0} inactive zombies", _inactiveZombies.Count);
+                            Logger.Info("Loaded {0} inactive zombies", _inactiveZombies.Count);
                         }
                     }
                 }
@@ -315,7 +315,7 @@ namespace WalkerSim
 
         public void BackgroundUpdate(object sender, DoWorkEventArgs e)
         {
-            Log.Out("[WalkerSim] Worker Start");
+            Logger.Info("Worker Start");
 
             MicroStopwatch updateWatch = new MicroStopwatch();
             updateWatch.Start();
@@ -380,7 +380,7 @@ namespace WalkerSim
                             if (world == null)
                             {
                                 // Work-around for client only support, some events are skipped like for when the player exits.
-                                Log.Out("[WalkerSim] World no longer exists, stopping simulation");
+                                Logger.Info("World no longer exists, stopping simulation");
                                 _worker.CancelAsync();
                                 break;
                             }
@@ -396,8 +396,7 @@ namespace WalkerSim
                     }
                     catch (Exception ex)
                     {
-                        //Log.Out("Exception in worker: {0}", ex.Message);
-                        Log.Error("[WalkerSim] Exception in worker");
+                        Logger.Error("Exception in worker");
                         Log.Exception(ex);
                     }
                 }
@@ -414,13 +413,13 @@ namespace WalkerSim
                     double avgFps = 1 / dtAverage;
                     if (avgFps < (1.0f / updateRate))
                     {
-                        Log.Warning("[WalkerSim] Detected bad performance, FPS Average: {0}", avgFps);
+                        Logger.Warning("Detected bad performance, FPS Average: {0}", avgFps);
                     }
                     nextReport = totalElapsed + 60.0;
                 }
             }
 
-            Log.Out("[WalkerSim] Worker Finished");
+            Logger.Info("Worker Finished");
             _running = false;
         }
     }

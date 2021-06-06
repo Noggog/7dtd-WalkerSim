@@ -76,9 +76,7 @@ namespace WalkerSim
             var pois = dynamicPrefabDecorator.GetPOIPrefabs();
             foreach (var poi in pois)
             {
-#if DEBUG
-                Log.Out("Poi: {0} {1}", poi.name, poi.boundingBoxPosition);
-#endif
+                Logger.Debug("Poi: {0} {1}", poi.name, poi.boundingBoxPosition);
 
                 Vector3 pos = new Vector3 { x = poi.boundingBoxPosition.x, y = poi.boundingBoxPosition.y, z = poi.boundingBoxPosition.z };
                 Vector3 boxSize = new Vector3 { x = poi.boundingBoxSize.x, y = poi.boundingBoxSize.y, z = poi.boundingBoxSize.z };
@@ -141,7 +139,7 @@ namespace WalkerSim
                 _zones[i].index = i;
             }
 
-            Log.Out("[WalkerSim] Cached {0} POI zones", _zones.Count);
+            Logger.Info("Cached {0} POI zones", _zones.Count);
         }
 
         public List<Viewer.DataPOIZone> GetSerializable(Simulation sim)
