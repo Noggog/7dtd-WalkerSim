@@ -22,7 +22,7 @@ namespace WalkerSim
 
         int ScaleCoord(float v)
         {
-            return (int)(v * 1.5);
+            return (int)(v * 2.5);
         }
         int ScaleCoord(int v)
         {
@@ -82,7 +82,7 @@ namespace WalkerSim
                 {
                     foreach (var zombie in active.list)
                     {
-                        gr.FillEllipse(Brushes.Blue, ScaleCoord(zombie.x), ScaleCoord(zombie.y), 2, 2);
+                        gr.FillEllipse(Brushes.Yellow, ScaleCoord(zombie.x), ScaleCoord(zombie.y), 2, 2);
                     }
                 }
 
@@ -95,7 +95,7 @@ namespace WalkerSim
                         gr.DrawRectangle(Pens.Green, ScaleCoord(zone.x1), ScaleCoord(zone.y1), ScaleCoord(zone.x2 - zone.x1), ScaleCoord(zone.y2 - zone.y1));
 
                         // Spawn Block.
-                        gr.DrawRectangle(Pens.Yellow, ScaleCoord(zone.x3), ScaleCoord(zone.y3), ScaleCoord(zone.x4 - zone.x3), ScaleCoord(zone.y4 - zone.y3));
+                        gr.DrawRectangle(Pens.Blue, ScaleCoord(zone.x3), ScaleCoord(zone.y3), ScaleCoord(zone.x4 - zone.x3), ScaleCoord(zone.y4 - zone.y3));
                     }
                 }
 
