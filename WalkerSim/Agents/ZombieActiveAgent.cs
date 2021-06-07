@@ -200,12 +200,14 @@ namespace WalkerSim
                             Logger.Debug($"[{Parent.id}] [{_state.Value}] was {distanceToTarget} away from its target");
                             Logger.Debug($"[{Parent.id}] [{_state.Value}] has investigation target? {entityZombie.HasInvestigatePosition}.  Investigation target: {entityZombie.InvestigatePosition}");
 #endif
-                            if (CheckIfDistracted(entityZombie, intendedGoal.Value)) return;
-
                             if (distanceToTarget <= 20f)
                             {
                                 Logger.Debug($"[{Parent.id}] [{_state.Value}] updating walkaway target");
                                 await SetWalkAwayVector(entityZombie, world);
+                            }
+                            else
+                            {
+                                CheckIfDistracted(entityZombie, intendedGoal.Value);
                             }
                         }
                     }));
