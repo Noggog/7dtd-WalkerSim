@@ -205,8 +205,8 @@ namespace WalkerSim
                 else
                 {
                     List<PlayerZone> zones = _playerZones.FindAllByPos2D(ent.GetPosition());
-                    if ((zones.Count == 0 || zombie.CurrentState == ZombieActiveAgent.State.WantsDespawn)
-                        && timeAlive >= MinZombieLifeTime)
+                    if ((zones.Count == 0 && timeAlive >= MinZombieLifeTime)
+                            || zombie.CurrentState == ZombieActiveAgent.State.WantsDespawn)
                     {
                         Logger.Debug("[{0}] Zombie {1} out of range, turning inactive", zombie.Parent.id, ent);
                         removeZombie = true;
@@ -254,7 +254,7 @@ namespace WalkerSim
                     bool removeZombie;
                     if (zombie.Active == null)
                     {
-                        Logger.Warning($"Tried to update ");
+                        Logger.Warning($"Tried to update active zombie that had no data");
                         removeZombie = true;
                     }
                     else
