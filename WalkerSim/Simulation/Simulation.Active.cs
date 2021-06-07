@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Threading;
@@ -11,7 +11,7 @@ namespace WalkerSim
         List<ZombieAgent> _activeZombies = new();
         Queue<ZombieSpawnRequest> _spawnQueue = new();
         
-        bool IsSpawnProtected(Vector3 pos)
+        public static bool IsSpawnProtected(Vector3 pos)
         {
             var world = GameManager.Instance.World;
             var players = world.Players.list;
@@ -29,7 +29,7 @@ namespace WalkerSim
             return false;
         }
 
-        bool CanZombieSpawnAt(Vector3 pos)
+        public static bool CanZombieSpawnAt(Vector3 pos)
         {
             var world = GameManager.Instance.World;
 
@@ -124,7 +124,7 @@ namespace WalkerSim
 
             zone.numZombies++;
 
-            Logger.Debug("Spawned zombie {0} at {1}", zombieEnt, spawnPos);
+            Logger.Debug("[{0}] Spawned zombie {1} at {2}", zombie.id, zombieEnt, spawnPos);
             lock (_activeZombies)
             {
                 _activeZombies.Add(zombie);
@@ -188,7 +188,7 @@ namespace WalkerSim
 
             if (world.GetEntity(zombie.entityId) is not EntityZombie ent)
             {
-                Logger.Debug("Failed to get zombie with entity id {0}", zombie.entityId);
+                Logger.Debug("[{0}] Failed to get zombie with entity id {0}", zombie.entityId);
                 removeZombie = true;
                 RespawnInactiveZombie(zombie.Parent);
             }
@@ -207,7 +207,7 @@ namespace WalkerSim
                     List<PlayerZone> zones = _playerZones.FindAllByPos2D(ent.GetPosition());
                     if (zones.Count == 0 && timeAlive >= MinZombieLifeTime)
                     {
-                        Logger.Debug("Zombie {0} out of range, turning inactive", ent);
+                        Logger.Debug("[{0}] Zombie {1} out of range, turning inactive", zombie.Parent.id, ent);
                         removeZombie = true;
 
                         world.RemoveEntity(zombie.entityId, EnumRemoveEntityReason.Despawned);
