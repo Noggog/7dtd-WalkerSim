@@ -51,32 +51,4 @@ namespace WalkerSim
         {
         }
     }
-
-    [HarmonyPatch(typeof(AIDirectorWanderingHordeComponent))]
-    [HarmonyPatch("SpawnWanderingHorde")]
-    class HordeSpawnHook
-    {
-        static bool Prefix(bool feral)
-        {
-#if DEBUG
-            //Log.Out("[WalkerSim] Preventing horde spawn");
-#endif
-            // Prevent hordes from spawning.
-            return false;
-        }
-    }
-
-
-    [HarmonyPatch(typeof(SpawnManagerBiomes))]
-    [HarmonyPatch("SpawnUpdate")]
-    class BiomeSpawnerHook
-    {
-        static void Prefix(string _spawnerName, ref bool _bSpawnEnemyEntities, ChunkAreaBiomeSpawnData _chunkBiomeSpawnData)
-        {
-#if DEBUG
-            //Log.Out("[WalkerSim] Preventing biome spawn");
-#endif
-            _bSpawnEnemyEntities = false;
-        }
-    }
 }
