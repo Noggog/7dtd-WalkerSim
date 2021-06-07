@@ -85,14 +85,30 @@ namespace WalkerSim
 
         private void UpdateTarget(ZombieInactiveAgent zombie)
         {
-            if (zombie.Parent.state != ZombieAgent.State.Idle)
+            switch (zombie.Parent.state)
             {
-                // If we have an active target wait for arrival.
-                if (!zombie.ReachedTarget())
-                    return;
+                case ZombieAgent.State.Investigating:
+                case ZombieAgent.State.Wandering:
+                case ZombieAgent.State.Active:
+                {
+                    // If we have an active target wait for arrival.
+                    if (!zombie.ReachedTarget())
+                        return;
 
-                zombie.AddVisitedZone(zombie.target);
+                    zombie.AddVisitedZone(zombie.target);
+                    zombie.Parent.state = ZombieAgent.State.Waiting;
+                    zombie.Parent.ReachedLocationTime = DateTime.Now;
+                    break;
+                }
             }
+
+            var remainingWaitTime = zombie.Parent.RemainingWaitTime;
+            if (remainingWaitTime != null && remainingWaitTime.Value > TimeSpan.Zero)
+            {
+                return;
+            }
+
+            zombie.Parent.state = ZombieAgent.State.Wandering;
 
             if (_state.IsBloodMoon)
             {

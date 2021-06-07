@@ -20,7 +20,6 @@ namespace WalkerSim
         public IZone? currentZone = null;
         public Vector3? intendedGoal;
         public bool reachedInitialTarget;
-        
 
         private BehaviorSubject<State> _state = new(State.InitialWalkIn);
         public State CurrentState => _state.Value;
@@ -89,14 +88,17 @@ namespace WalkerSim
 
         private IObservable<Unit> Idle()
         {
-            TimeSpan toWait;
-            lock (_rng)
+            var toWait = Parent.RemainingWaitTime;
+            if (toWait == null)
             {
-                toWait = TimeSpan.FromSeconds(_rng.Get(Config.Instance.MinIdleSeconds, Config.Instance.MaxIdleSeconds));
+                lock (_rng)
+                {
+                    toWait = TimeSpan.FromSeconds(_rng.Get(Config.Instance.MinIdleSeconds, Config.Instance.MaxIdleSeconds));
+                }
             }
-            Logger.Debug("[{0}] [{1}] waiting {2} seconds.", Parent.id, _state.Value, toWait.TotalSeconds);
+            Logger.Debug("[{0}] [{1}] waiting {2} seconds.", Parent.id, _state.Value, toWait.Value.TotalSeconds);
 
-            return Observable.Interval(toWait)
+            return Observable.Interval(toWait.Value)
                 .Take(1)
                 .Select(_ =>
                 {

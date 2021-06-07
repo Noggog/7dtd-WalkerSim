@@ -39,6 +39,7 @@ namespace WalkerSim
             var playerZones = state.playerZones;
             var active = state.active;
             var inactive = state.inactive;
+            var waiting = state.waiting;
 
             if (worldInfo.w == 0 || worldInfo.h == 0)
                 return null;
@@ -74,6 +75,15 @@ namespace WalkerSim
                     foreach (var zombie in inactive.list)
                     {
                         gr.FillEllipse(Brushes.Red, ScaleCoord(zombie.x), ScaleCoord(zombie.y), 2, 2);
+                    }
+                }
+
+                // Draw inactive.
+                if (chkInactive.Checked && waiting.list != null)
+                {
+                    foreach (var zombie in waiting.list)
+                    {
+                        gr.FillEllipse(Brushes.Green, ScaleCoord(zombie.x), ScaleCoord(zombie.y), 2, 2);
                     }
                 }
 

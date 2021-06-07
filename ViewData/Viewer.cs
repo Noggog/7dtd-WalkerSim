@@ -12,6 +12,7 @@ namespace WalkerSim.Viewer
         PlayerZones,
         ActiveZombies,
         InactiveZombies,
+        WaitingZombies,
         WorldEventSound,
     }
 

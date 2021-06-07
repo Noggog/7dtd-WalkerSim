@@ -10,6 +10,7 @@ namespace WalkerSim
         {
             Idle,
             Wandering,
+            Waiting,
             Investigating,
             Active,
         }
@@ -19,6 +20,16 @@ namespace WalkerSim
         public State state = State.Idle;
         public Vector3 pos = new Vector3();
         public int health = -1;
+        public DateTime ReachedLocationTime = DateTime.MinValue;
+
+        public TimeSpan? RemainingWaitTime
+        {
+            get
+            {
+                if (state != State.Waiting) return null;
+                return TimeSpan.FromSeconds(Config.Instance.InactiveWaitAtTargetTime) - (DateTime.Now - ReachedLocationTime);
+            }
+        }
         
         public ZombieInactiveAgent Inactive { get; }
         public ZombieActiveAgent? Active { get; private set; }

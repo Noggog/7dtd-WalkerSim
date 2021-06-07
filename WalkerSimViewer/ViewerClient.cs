@@ -30,6 +30,7 @@ namespace WalkerSim
         public Viewer.POIZones poiZones = new();
         public Viewer.PlayerZones playerZones = new();
         public Viewer.ZombieList inactive = new();
+        public Viewer.ZombieList waiting = new();
         public Viewer.ZombieList active = new();
         public List<SoundEvent> sounds = new();
     }
@@ -197,6 +198,9 @@ namespace WalkerSim
                         break;
                     case Viewer.DataType.InactiveZombies:
                         _worldState.inactive.Deserialize(buffer);
+                        break;
+                    case Viewer.DataType.WaitingZombies:
+                        _worldState.waiting.Deserialize(buffer);
                         break;
                     case Viewer.DataType.WorldEventSound:
                         var ev = new Viewer.WorldEventSound();

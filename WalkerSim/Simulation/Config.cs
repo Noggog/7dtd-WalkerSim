@@ -24,8 +24,9 @@ namespace WalkerSim
         public float WalkSpeedScale { get; private set; } = 1.0f;
         public float ReservedSpawns { get; private set; } = 0.5f;
         public bool PauseDuringBloodmon { get; private set; } = false;
-        public int MinIdleSeconds { get; private set; } = 30;
-        public int MaxIdleSeconds { get; private set; } = 240;
+        public int MinIdleSeconds { get; private set; } = 5;
+        public int MaxIdleSeconds { get; private set; } = 25;
+        public int InactiveWaitAtTargetTime { get; private set; } = 900;
 
         public Dictionary<string, float> SoundDistance { get; private set; } = new();
 
@@ -60,6 +61,8 @@ namespace WalkerSim
             if (MinIdleSeconds != other.MinIdleSeconds)
                 return false;
             if (MaxIdleSeconds != other.MaxIdleSeconds)
+                return false;
+            if (InactiveWaitAtTargetTime != other.InactiveWaitAtTargetTime)
                 return false;
             return true;
         }
@@ -170,6 +173,9 @@ namespace WalkerSim
                         break;
                     case "MaxIdleSeconds":
                         MaxIdleSeconds = int.Parse(node.InnerText);
+                        break;
+                    case "InactiveWaitAtTargetTime":
+                        InactiveWaitAtTargetTime = int.Parse(node.InnerText);
                         break;
                 }
             }

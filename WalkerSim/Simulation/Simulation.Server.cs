@@ -81,10 +81,12 @@ namespace WalkerSim
                 if (_inactiveZombies.Count == 0)
                     return;
 
-                var list = new List<Viewer.DataZombie>();
+                var waiting = new List<Viewer.DataZombie>();
+                var inactive = new List<Viewer.DataZombie>();
                 foreach (var zombie in _inactiveZombies)
                 {
                     Vector2i p = WorldToBitmap(zombie.pos);
+                    var list = zombie.state == ZombieAgent.State.Waiting ? waiting : inactive;
                     list.Add(new Viewer.DataZombie
                     {
                         id = zombie.id,
@@ -93,12 +95,19 @@ namespace WalkerSim
                     });
                 }
 
-                var data = new Viewer.ZombieList()
+                var inactiveData = new Viewer.ZombieList()
                 {
-                    list = list
+                    list = inactive
                 };
 
-                sender.SendData(cl, Viewer.DataType.InactiveZombies, data);
+                sender.SendData(cl, Viewer.DataType.InactiveZombies, inactiveData);
+                
+                var waitingData = new Viewer.ZombieList()
+                {
+                    list = waiting
+                };
+
+                sender.SendData(cl, Viewer.DataType.WaitingZombies, waitingData);
             }
         }
 

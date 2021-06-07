@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,9 +11,9 @@ namespace WalkerSim
         
         const int MaxVisitedHistory = 5;
 
-        public Vector3 targetPos = new Vector3();
+        public Vector3 targetPos = new();
         public IZone? target = null;
-        public List<IZone> visitedZones = new List<IZone>();
+        public List<IZone> visitedZones = new();
         public float simulationTime = 0.0f;
 
         public ZombieInactiveAgent(ZombieAgent parent)
