@@ -105,7 +105,7 @@ namespace WalkerSim
                 });
         }
 
-        private void GetWalkAwayVector(EntityZombie entityZombie, World world, out Vector3? targetPos, out bool couldFindAnything)
+        private async Task SetWalkAwayVector(EntityZombie entityZombie, World world)
         {
             var normalized = Parent.Inactive.targetPos - entityZombie.position;
             normalized.Normalize();
@@ -115,9 +115,11 @@ namespace WalkerSim
             const int Interval = 5;
             const int Max = 60;
 
-            couldFindAnything = false;
-            targetPos = null;
+            var couldFindAnything = false;
+            Vector3? targetPos = null;
             var distance = Interval;
+            
+            // Dialing up to find max target
             while (distance <= Max)
             {
                 var vec = entityZombie.position + (normalized * distance);
@@ -134,6 +136,42 @@ namespace WalkerSim
 
                 distance += Interval;
             }
+
+            // Couldn't find anything
+            if (targetPos == null)
+            {
+                _state.OnNext(couldFindAnything ? State.Staying : State.WantsDespawn);
+                return;
+            }
+
+            // Set investigation and dial back until it sticks
+            while (distance > 0)
+            {
+                intendedGoal = targetPos;
+                entityZombie.SetInvestigatePosition(
+                    intendedGoal.Value,
+                    6000,
+                    false);
+
+                // Wait until next game frame
+                await Task.Delay(400);
+
+                if (entityZombie.HasInvestigatePosition)
+                {
+#if DEBUG
+                    var distanceToTarget = Vector3.Distance(entityZombie.position, intendedGoal.Value);
+                    Logger.Debug($"[{Parent.id}] [{_state.Value}] walk away goal set to {distanceToTarget} away from its target");
+#endif
+                    // Investigation position stuck
+                    return;
+                }
+                
+                // Try some more
+                distance -= Interval;
+            }
+            
+            Logger.Debug("[{0}] [{1}] Could not find anywhere to walk away to.  Despawning", Parent.id, _state.Value);
+            _state.OnNext(State.WantsDespawn);
         }
 
         private IObservable<Unit> WalkOut()
@@ -141,67 +179,35 @@ namespace WalkerSim
             Logger.Debug("[{0}] [{1}] walking away.", Parent.id, _state.Value);
             return Observable.Return(Unit.Default) 
                 .ObserveOn(MyScheduler.Instance)
-                .Do(_ =>
+                .SelectTask(async () =>
                 {
                     var world = GameManager.Instance.World;
                     if (world.GetEntity(entityId) is EntityZombie entityZombie)
                     {
-                        GetWalkAwayVector(entityZombie, world, out var targetPos, out var couldFindAnything);
-                        if (targetPos == null)
-                        {
-                            _state.OnNext(couldFindAnything ? State.Staying : State.WantsDespawn);
-                            return;
-                        }
-
-                        intendedGoal = targetPos;
-#if DEBUG
-                        var distanceToTarget = Vector3.Distance(entityZombie.position, intendedGoal.Value);
-                        Logger.Debug($"[{Parent.id}] [{_state.Value}] initial walk away goal was {distanceToTarget} away from its target");
-#endif
-                        entityZombie.SetInvestigatePosition(
-                            intendedGoal.Value,
-                            6000,
-                            false);
-                        Logger.Debug("[{0}] [{1}] has investigation target? {2}.  Investigation target: {3}", Parent.id, _state.Value, entityZombie.HasInvestigatePosition, entityZombie.InvestigatePosition);
+                        await SetWalkAwayVector(entityZombie, world);
                     }
                 })
                 .Concat(Observable.Interval(TimeSpan.FromSeconds(5))
                     .ObserveOn(MyScheduler.Instance)
-                    .Select(_ =>
+                    .SelectTask(async () =>
                     {
                         var world = GameManager.Instance.World;
                         if (world.GetEntity(entityId) is EntityZombie entityZombie)
                         {
-                            if (intendedGoal == null) return Unit.Default;
+                            if (intendedGoal == null) return;
 #if DEBUG
                             var distanceToTarget = Vector3.Distance(entityZombie.position, intendedGoal.Value);
                             Logger.Debug($"[{Parent.id}] [{_state.Value}] was {distanceToTarget} away from its target");
                             Logger.Debug($"[{Parent.id}] [{_state.Value}] has investigation target? {entityZombie.HasInvestigatePosition}.  Investigation target: {entityZombie.InvestigatePosition}");
 #endif
-                            if (CheckIfDistracted(entityZombie, intendedGoal.Value)) return Unit.Default;
+                            if (CheckIfDistracted(entityZombie, intendedGoal.Value)) return;
 
                             if (distanceToTarget <= 20f)
                             {
                                 Logger.Debug($"[{Parent.id}] [{_state.Value}] updating walkaway target");
-                                GetWalkAwayVector(entityZombie, world, out var targetPos, out var couldFindAnything);
-                                
-                                if (targetPos == null)
-                                {
-                                    Logger.Debug($"[{Parent.id}] [{_state.Value}] could not update walkaway target");
-                                    _state.OnNext(couldFindAnything ? State.Staying : State.WantsDespawn);
-                                    return Unit.Default;
-                                }
-
-                                intendedGoal = targetPos;
-                                
-                                entityZombie.SetInvestigatePosition(
-                                    intendedGoal.Value,
-                                    6000,
-                                    false);
+                                await SetWalkAwayVector(entityZombie, world);
                             }
                         }
-
-                        return Unit.Default;
                     }));
         }
 
